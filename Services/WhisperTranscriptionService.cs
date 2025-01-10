@@ -8,12 +8,10 @@ namespace TextToSpeech.Services;
 public class WhisperTranscriptionService : ITranscriptionService
 {
     private readonly OpenAIClient _client;
-    private readonly AudioValidator _audioValidator;
 
     public WhisperTranscriptionService(IConfiguration configuration)
     {
         _client = new OpenAIClient(configuration.GetValue<string>("OPENAI_API_KEY"));
-        _audioValidator = new AudioValidator();
     }
 
     public async Task<TranscriptionResponse> TranscribeAudioAsync(IFormFile? audioFile)
@@ -45,7 +43,7 @@ public class WhisperTranscriptionService : ITranscriptionService
                 options
             );
             // var response = new AudioTranscriptionMock();
-            if (response.Text == "")
+            if (string.IsNullOrWhiteSpace(response.Text))
                 return new TranscriptionResponse
                 {
                     Success = false,
